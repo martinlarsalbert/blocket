@@ -2,8 +2,7 @@
 Module that inhabits some methods to download cars from blocket.se
 
 """
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+#!/usr/bin/python3.6
 
 from requests import get
 from requests.exceptions import RequestException
