@@ -12,6 +12,7 @@ import re
 import pandas as pd
 from collections import OrderedDict
 import numpy as np
+import os.path
 
 import logging
 from logging import handlers
@@ -209,7 +210,12 @@ def combine_new_and_old(df_cars,file_path = 'cars.csv'):
     return df_cars
 
 def save(df_cars,file_path = 'cars.csv'):
-    df_cars.to_csv(file_path, sep=';')
+
+    path = __file__
+    directory = os.path.split(path)[0]
+    save_path = os.path.join(directory,file_path)
+
+    df_cars.to_csv(save_path, sep=';')
     logging.info('All data has been saved to:%s' % file_path)
 
 if __name__ == '__main__':
