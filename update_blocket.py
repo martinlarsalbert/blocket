@@ -216,7 +216,7 @@ def save(df_cars,file_path = 'cars.csv'):
     save_path = os.path.join(directory,file_path)
 
     df_cars.to_csv(save_path, sep=';')
-    logging.info('All data has been saved to:%s' % file_path)
+    logging.info('All data has been saved to:%s' % save_path)
 
 if __name__ == '__main__':
 
