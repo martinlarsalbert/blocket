@@ -32,10 +32,14 @@ warnings.filterwarnings('ignore')
 
 
 car_paths = OrderedDict()
-car_paths['kangoo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=30&cbl1=4'
-car_paths['berlingo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ca=31&is=1&l=0&md=th&cb=7&cbl1=1'
-car_paths['partner'] = r'https://www.blocket.se/goteborg/bilar?ca=15&st=s&cg=1020&cb=27&cbl1=14'
-car_paths['caddy'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=40&cbl1=2'
+#car_paths['kangoo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=30&cbl1=4' #Göteborg
+car_paths['kangoo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=3&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=30&cbl1=4' #Hela sverige
+
+#car_paths['berlingo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ca=31&is=1&l=0&md=th&cb=7&cbl1=1' #Göteborg
+car_paths['berlingo'] = r'https://www.blocket.se/goteborg/bilar?ca=15&w=3&st=s&cg=1020&cb=7&cbl1=1' #Hela sverige
+
+#car_paths['partner'] = r'https://www.blocket.se/goteborg/bilar?ca=15&st=s&cg=1020&cb=27&cbl1=14'
+#car_paths['caddy'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=40&cbl1=2'
 
 
 def simple_get(url):
