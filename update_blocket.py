@@ -96,6 +96,38 @@ def find_id_from_href(href):
     return id
 
 
+def clean_horsepower(s_horsepower):
+    result = re.search('\d+', s_horsepower)
+
+    if result:
+        return int(result.group(0))
+    else:
+        return np.nan
+
+
+def get_extra_data(html):
+    extra_data = html.find('dl', attrs={'class': 'col-xs-12 motor-extradata-details'})
+
+    if extra_data:
+        key_items = extra_data.findAll('dt')
+        value_items = extra_data.findAll('dd')
+
+        extra_data = pd.Series()
+
+        for key_item, value_item in zip(key_items, value_items):
+            key = key_item.text
+            value = value_item.text
+            extra_data[key] = value
+
+        if 'Hästkrafter' in extra_data:
+            s_horsepower = extra_data['Hästkrafter']
+            extra_data['Hästkrafter'] = clean_horsepower(s_horsepower=s_horsepower)
+
+        return extra_data
+
+    else:
+        return None
+
 def parse_car(href):
     raw_html = simple_get(href)
     html = BeautifulSoup(raw_html, 'html.parser')
@@ -117,6 +149,9 @@ def parse_car(href):
 
     price = html.find('div', attrs={'id': 'vi_price'})
     data['price'] = clean_price(price.text)
+
+    extra_data = get_extra_data(html=html)
+    data.update(extra_data)
 
     return data
 
