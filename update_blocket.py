@@ -149,6 +149,7 @@ def get_cars(car_path, max_cars=None):
                 a = item.find('div', attrs={'class': 'pull-left'})
                 place = a.contents[-1]
                 s_car['place'] = place
+                s_car['href'] = href
                 df_cars = df_cars.append(s_car)
 
             counter += 1
@@ -193,7 +194,7 @@ def load_from_blocket():
     df_cars[float_cols] = df_cars[float_cols].astype(float)
 
     index = (df_cars['price'] > 2000)
-    df_cars = df_cars.loc[index]
+    df_cars = df_cars.loc[index].copy()
 
     logging.info('All cars have been succesfully loaded today')
 
