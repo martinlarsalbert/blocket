@@ -32,15 +32,9 @@ warnings.filterwarnings('ignore')
 
 
 car_paths = OrderedDict()
-#car_paths['kangoo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=30&cbl1=4' #Göteborg
-car_paths['kangoo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=3&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=30&cbl1=4' #Hela sverige
-
-#car_paths['berlingo'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ca=31&is=1&l=0&md=th&cb=7&cbl1=1' #Göteborg
-car_paths['berlingo'] = r'https://www.blocket.se/goteborg/bilar?ca=15&w=3&st=s&cg=1020&cb=7&cbl1=1' #Hela sverige
-
-#car_paths['partner'] = r'https://www.blocket.se/goteborg/bilar?ca=15&st=s&cg=1020&cb=27&cbl1=14'
-#car_paths['caddy'] = r'https://www.blocket.se/goteborg/bilar?cg=1020&w=1&st=s&ccco=1&ca=15&is=1&l=0&md=th&cb=40&cbl1=2'
-
+car_paths['kangoo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=30&cbl1=4'
+car_paths['berlingo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ca=15&is=1&l=0&md=th&cp=&cb=7&cbl1=1'
+car_paths['caddy'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=40&cbl1=2'
 
 def simple_get(url):
     """
@@ -136,19 +130,25 @@ def get_cars(car_path, max_cars=None):
 
         raw_html = simple_get(url=next_page_href)
         html = BeautifulSoup(raw_html, 'html.parser')
-        item_links = html.find_all('a', attrs={'class': 'item_link'})
+        item_list = html.find_all('div', attrs={'class': 'media-body desc'})
 
-        for item_link in item_links:
+        for item in item_list:
 
             if not max_cars is None:
                 if counter > max_cars:
                     return df_cars
 
+            href = item.find('a', attrs={'class': 'item_link'}).get('href')
+
             try:
-                s_car = parse_car(href=item_link['href']).copy()
+                s_car = parse_car(href=href).copy()
             except AttributeError:
+                logging.warning('could not parse car:%s' % href)
                 continue
             else:
+                a = item.find('div', attrs={'class': 'pull-left'})
+                place = a.contents[-1]
+                s_car['place'] = place
                 df_cars = df_cars.append(s_car)
 
             counter += 1
@@ -157,10 +157,9 @@ def get_cars(car_path, max_cars=None):
         if next_page is None:
             next_page_href = None
         else:
-            next_page_href = r'https://www.blocket.se/goteborg/bilar' + next_page['href']
+            next_page_href = r'https://www.blocket.se/hela_sverige' + next_page['href']
 
     return df_cars
-
 
 def decode_miltal(s_miltal):
     parts = s_miltal.split('-')
