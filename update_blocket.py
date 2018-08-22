@@ -151,7 +151,8 @@ def parse_car(href):
     data['price'] = clean_price(price.text)
 
     extra_data = get_extra_data(html=html)
-    data.update(extra_data)
+    if not extra_data is None:
+        data.update(extra_data)
 
     return data
 
