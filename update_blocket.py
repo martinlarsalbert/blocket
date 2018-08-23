@@ -151,10 +151,12 @@ def parse_car(href):
 
     extra_data = get_extra_data(html=html)
     if not extra_data is None:
-        data = data.append(extra_data,ignore_index=True)
+        all_data = pd.concat([data,extra_data])
+    else:
+        all_data = data
 
-    data.name = find_id_from_href(href=href)
-    return data
+    all_data.name = find_id_from_href(href=href)
+    return all_data
 
 
 def get_cars(car_path, max_cars=None):
@@ -199,6 +201,9 @@ def get_cars(car_path, max_cars=None):
     return df_cars
 
 def decode_miltal(s_miltal):
+    if not isinstance(s_miltal,str):
+        return np.nan
+
     parts = s_miltal.split('-')
 
     if len(parts) == 1:
@@ -208,7 +213,7 @@ def decode_miltal(s_miltal):
     else:
         raise ValueError()
 
-def load_from_blocket():
+def load_from_blocket(max_cars = None):
 
     logging.info('\n\n____________ Starting to load from blocket.se  _____________')
 
@@ -217,7 +222,7 @@ def load_from_blocket():
     for car_type, car_path in car_paths.items():
         logging.info('Loading car type:%s from:%s' % (car_type,car_path))
 
-        df_car_type_cars = get_cars(car_path=car_path)
+        df_car_type_cars = get_cars(car_path=car_path,max_cars=max_cars)
         df_car_type_cars['car type'] = car_type
         df_cars = df_cars.append(df_car_type_cars)
 
@@ -225,6 +230,11 @@ def load_from_blocket():
     df_cars.loc[index, 'Tillverkningsår'] = df_cars.loc[index, 'Modellår']
 
     df_cars['Miltal'] = df_cars['Miltal'].apply(func=decode_miltal)
+    index = df_cars['Miltal'].isnull()
+    if index.sum() > 0:
+        logging.warning('Missing "Miltal" removing cars: %s' % df_cars.loc[index]['header'])
+        df_cars = df_cars.loc[~index]
+
 
     float_cols = ['Miltal', 'Modellår', 'Tillverkningsår']
     df_cars[float_cols] = df_cars[float_cols].astype(float)
@@ -232,7 +242,7 @@ def load_from_blocket():
     index = (df_cars['price'] > 2000)
     df_cars = df_cars.loc[index].copy()
 
-    logging.info('All cars have been succesfully loaded today')
+    logging.info('%i cars have been succesfully loaded today' % len(df_cars))
 
     return df_cars
 
@@ -260,7 +270,7 @@ def save(df_cars,file_path = 'cars.csv'):
 
 if __name__ == '__main__':
 
-    df_cars = load_from_blocket()
+    df_cars = load_from_blocket(max_cars=None)
     df_cars = combine_new_and_old(df_cars=df_cars)
     save(df_cars)
 
