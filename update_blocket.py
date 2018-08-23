@@ -152,7 +152,7 @@ def parse_car(href):
 
     extra_data = get_extra_data(html=html)
     if not extra_data is None:
-        data.update(extra_data)
+        data = data.append(extra_data)
 
     return data
 
