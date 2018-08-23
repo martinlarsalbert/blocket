@@ -112,18 +112,18 @@ def get_extra_data(html):
         key_items = extra_data.findAll('dt')
         value_items = extra_data.findAll('dd')
 
-        extra_data = pd.Series()
+        data_extra = pd.Series()
 
         for key_item, value_item in zip(key_items, value_items):
             key = key_item.text
             value = value_item.text
-            extra_data[key] = value
+            data_extra[key] = value
 
-        if 'Hästkrafter' in extra_data:
-            s_horsepower = extra_data['Hästkrafter']
-            extra_data['Hästkrafter'] = clean_horsepower(s_horsepower=s_horsepower)
+        if 'Hästkrafter' in data_extra:
+            s_horsepower = data_extra['Hästkrafter']
+            data_extra['Hästkrafter'] = clean_horsepower(s_horsepower=s_horsepower)
 
-        return extra_data
+        return data_extra
 
     else:
         return None
