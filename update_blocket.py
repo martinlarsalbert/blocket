@@ -145,15 +145,15 @@ def parse_car(href):
         data[key] = value
 
     data['header'] = name
-    data.name = find_id_from_href(href=href)
 
     price = html.find('div', attrs={'id': 'vi_price'})
     data['price'] = clean_price(price.text)
 
     extra_data = get_extra_data(html=html)
     if not extra_data is None:
-        data = data.append(extra_data)
+        data = data.append(extra_data,ignore_index=True)
 
+    data.name = find_id_from_href(href=href)
     return data
 
 
