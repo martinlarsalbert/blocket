@@ -207,7 +207,13 @@ def decode_miltal(s_miltal):
     parts = s_miltal.split('-')
 
     if len(parts) == 1:
-        return float(parts[0])
+        try:
+            value = float(parts[0])
+        except ValueError:
+            value = np.nan
+
+        return value
+
     elif len(parts) == 2:
         return np.mean([float(parts[0]), float(parts[1])])
     else:
