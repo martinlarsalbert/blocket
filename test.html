@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<head>
+  <title>Vega Lite Bar Chart</title>
+  <meta charset="utf-8">
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@4.2.0/build/vega.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@3.0.0-rc6/build/vega-lite.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@3.19.2/build/vega-embed.js"></script>
+
+  <style media="screen">
+    /* Add space between Vega-Embed links  */
+    .vega-actions a {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Template for Embedding Vega-Lite Visualization</h1>
+  <!-- Container for the visualization -->
+  <div id="vis2"></div>
+  <div id="vis3"></div>
+
+
+
+  <script>
+  // Assign the specification to a local variable vlSpec.
+
+  var vlSpec2 = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "width": 500,
+    "height": 500,
+    "data": {"url": "cars_publish.csv"},
+    "selection": {
+     "grid": {
+     "type": "interval", "bind": "scales"
+   },
+
+    },
+    "transform": [{"filter": {"field": "Miltal", "gt": 1000}}],
+    "mark": "point",
+    "encoding": {
+        "x": {"field": "Miltal", "type": "quantitative",
+             "scale": {"domain": [0, 35000]}
+             },
+        "y": {"field": "price", "type": "quantitative",
+             "scale": {"domain": [0, 150000]}
+             },
+        "color": {"field": "Modell", "type": "nominal"},
+        "tooltip": [{"field": "Märke", "type": "nominal"},
+                    {"field": "Tillverkningsår", "type": "quantitative"}],
+        "href": {"field": "href", "type": "nominal"},
+
+      }
+  };
+
+  var vlSpec3 = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v2.json",
+    "width": 500,
+    "height": 500,
+    "data": {"url": "cars_publish.csv"},
+    "selection": {
+     "grid": {
+     "type": "interval", "bind": "scales"
+   },},
+    "transform": [{"filter": {"field": "Tillverkningsår", "gt": 1995}}],
+    "mark": "point",
+    "encoding": {
+        "x": {"field": "Tillverkningsår", "type": "quantitative",
+        "scale": {"domain": [1995, 2020]}},
+        "y": {"field": "price", "type": "quantitative",
+        "scale": {"domain": [0, 150000]}},
+        "href": {"field": "href", "type": "nominal"},
+      }
+  };
+
+  // Embed the visualization in the container with id `vis`
+
+  vegaEmbed("#vis2", vlSpec2);
+  vegaEmbed("#vis3", vlSpec3);
+
+  </script>
+</body>
+</html>
