@@ -268,6 +268,11 @@ def save(df_cars,file_path = 'cars.csv'):
     df_cars.to_csv(save_path, sep=';')
     logging.info('All data has been saved to:%s' % save_path)
 
+    save_path_publish = os.path.join(directory, 'cars_publish.csv')
+
+    df_cars.to_csv(save_path_publish, sep=',')
+    logging.info('All data has also been saved to:%s' % save_path_publish)
+
 if __name__ == '__main__':
 
     df_cars = load_from_blocket(max_cars=None)
