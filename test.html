@@ -45,7 +45,7 @@
         "y": {"field": "price", "type": "quantitative",
              "scale": {"domain": [0, 150000]}
              },
-        "color": {"field": "Modell", "type": "nominal"},
+        "color": {"field": "car type", "type": "nominal"},
         "tooltip": [{"field": "Märke", "type": "nominal"},
                     {"field": "Tillverkningsår", "type": "quantitative"}],
         "href": {"field": "href", "type": "nominal"},
@@ -70,7 +70,9 @@
         "y": {"field": "price", "type": "quantitative",
         "scale": {"domain": [0, 150000]}},
         "href": {"field": "href", "type": "nominal"},
-      }
+        "color": {"field": "car type", "type": "nominal"},
+      },
+
   };
 
   // Embed the visualization in the container with id `vis`
