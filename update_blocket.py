@@ -30,12 +30,6 @@ log.addHandler(fh)
 import warnings
 warnings.filterwarnings('ignore')
 
-
-car_paths = OrderedDict()
-car_paths['kangoo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=30&cbl1=4'
-car_paths['berlingo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ca=15&is=1&l=0&md=th&cp=&cb=7&cbl1=1'
-car_paths['caddy'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=40&cbl1=2'
-
 def simple_get(url):
     """
     Attempts to get the content at `url` by making an HTTP GET request.
@@ -173,7 +167,7 @@ def get_cars(car_path, max_cars=None):
         for item in item_list:
 
             if not max_cars is None:
-                if counter > max_cars:
+                if counter >= max_cars:
                     return df_cars
 
             href = item.find('a', attrs={'class': 'item_link'}).get('href')
@@ -219,34 +213,42 @@ def decode_miltal(s_miltal):
     else:
         raise ValueError()
 
-def load_from_blocket(max_cars = None):
+def load_from_blocket(car_paths,max_cars = None):
 
     logging.info('\n\n____________ Starting to load from blocket.se  _____________')
 
     df_cars = pd.DataFrame()
 
+    car_counter = 0
     for car_type, car_path in car_paths.items():
         logging.info('Loading car type:%s from:%s' % (car_type,car_path))
 
-        df_car_type_cars = get_cars(car_path=car_path,max_cars=max_cars)
+        if max_cars is None:
+            max_cars_left = max_cars
+        else:
+            max_cars_left = max_cars - car_counter
+
+        df_car_type_cars = get_cars(car_path=car_path,max_cars=max_cars_left)
+        car_counter+=len(df_car_type_cars)
+
         df_car_type_cars['car type'] = car_type
         df_cars = df_cars.append(df_car_type_cars)
 
-    index = df_cars['Tillverkningsår'] == '-'
-    df_cars.loc[index, 'Tillverkningsår'] = df_cars.loc[index, 'Modellår']
-
-    df_cars['Miltal'] = df_cars['Miltal'].apply(func=decode_miltal)
-    index = df_cars['Miltal'].isnull()
-    if index.sum() > 0:
-        logging.warning('Missing "Miltal" removing cars: %s' % df_cars.loc[index]['header'])
-        df_cars = df_cars.loc[~index]
-
-
-    float_cols = ['Miltal', 'Modellår', 'Tillverkningsår']
-    df_cars[float_cols] = df_cars[float_cols].astype(float)
-
-    index = (df_cars['price'] > 2000)
-    df_cars = df_cars.loc[index].copy()
+    #index = df_cars['Tillverkningsår'] == '-'
+    #df_cars.loc[index, 'Tillverkningsår'] = df_cars.loc[index, 'Modellår']
+#
+    #df_cars['Miltal'] = df_cars['Miltal'].apply(func=decode_miltal)
+    #index = df_cars['Miltal'].isnull()
+    #if index.sum() > 0:
+    #    logging.warning('Missing "Miltal" removing cars: %s' % df_cars.loc[index]['header'])
+    #    df_cars = df_cars.loc[~index]
+#
+#
+    #float_cols = ['Miltal', 'Modellår', 'Tillverkningsår']
+    #df_cars[float_cols] = df_cars[float_cols].astype(float)
+#
+#    #index = (df_cars['price'] > 2000)
+    #df_cars = df_cars.loc[index].copy()
 
     logging.info('%i cars have been succesfully loaded today' % len(df_cars))
 
@@ -274,14 +276,26 @@ def save(df_cars,file_path = 'cars.csv'):
     df_cars.to_csv(save_path, sep=';')
     logging.info('All data has been saved to:%s' % save_path)
 
-    save_path_publish = os.path.join(directory, 'cars_publish.csv')
+    _,publish_name = file_name = os.path.split(file_path)
+    name,ext = os.path.splitext(publish_name)
+    publish_file_name = '%s_publish%s' % (name,ext)
+    save_path_publish = os.path.join(directory, publish_file_name)
+
 
     df_cars.to_csv(save_path_publish, sep=',')
     logging.info('All data has also been saved to:%s' % save_path_publish)
 
 if __name__ == '__main__':
 
-    df_cars = load_from_blocket(max_cars=None)
+    car_paths = OrderedDict()
+    car_paths[
+        'kangoo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=30&cbl1=4'
+    car_paths[
+        'berlingo'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ca=15&is=1&l=0&md=th&cp=&cb=7&cbl1=1'
+    car_paths[
+        'caddy'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&ps=&pe=&mys=&mye=&ms=&me=&cxpf=&cxpt=&fu=&gb=&ccco=1&ca=15&is=1&l=0&md=th&cp=&cb=40&cbl1=2'
+
+    df_cars = load_from_blocket(car_paths=car_paths,max_cars=None)
     df_cars = combine_new_and_old(df_cars=df_cars)
     save(df_cars)
 
