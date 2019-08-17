@@ -13,6 +13,6 @@ car_paths['caddy'] = r'https://www.blocket.se/hela_sverige?q=&cg=1020&w=3&st=s&p
 
 cars_path = 'cars.csv'
 
-df_cars = ub.load_from_blocket(car_paths=car_paths, max_cars=5)
+df_cars = ub.load_from_blocket(car_paths=car_paths, max_cars=None)
 df_cars = ub.combine_new_and_old(file_path=cars_path,df_cars=df_cars)
 ub.save(file_path=cars_path,df_cars=df_cars)
