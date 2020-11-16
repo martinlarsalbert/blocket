@@ -2,6 +2,8 @@
 Webscraping of blocket.se in the search for a new car...
 ![alt text](car.png)
 
+## Note! This one is unfortunatelly no longer compatible with the current version of blocket!
+
 First of all, don't fly when you can drive and don't drive when you 
 can walk or bike, as the global temperature is rising! 
 But if you like me really need a car, in my case to do longer trips 

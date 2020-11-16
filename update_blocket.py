@@ -162,7 +162,7 @@ def get_cars(car_path, max_cars=None):
 
         raw_html = simple_get(url=next_page_href)
         html = BeautifulSoup(raw_html, 'html.parser')
-        item_list = html.find_all('div', attrs={'class': 'media-body desc'})
+        item_list = html.find_all('div', attrs={'class': 'styled__Wrapper-sc-1kpvi4z-0 itHtzm'})
 
         for item in item_list:
 
@@ -170,7 +170,7 @@ def get_cars(car_path, max_cars=None):
                 if counter >= max_cars:
                     return df_cars
 
-            href = item.find('a', attrs={'class': 'item_link'}).get('href')
+            href = item.find('a', attrs={'class': 'styled__Wrapper-sc-1kpvi4z-0 itHtzm'}).get('to')
 
             try:
                 s_car = parse_car(href=href).copy()
